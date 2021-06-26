@@ -15,6 +15,8 @@
 
 SRC="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 
+HOST_FAKEROOT="${HOST_FAKEROOT:-fakeroot}"
+
 # check for whitespace in ${SRC} and exit for safety reasons
 grep -q "[[:space:]]" <<<"${SRC}" && { echo "\"${SRC}\" contains whitespace. Not supported. Aborting." >&2 ; exit 1 ; }
 
