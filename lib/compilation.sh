@@ -73,6 +73,7 @@ compile_atf()
 	[[ $CREATE_PATCHES == yes ]] && userpatch_create "atf"
 
 	echo -e "\n\t==  atf  ==\n" >> "${DEST}"/debug/compilation.log
+	echo -e "\n\t== executing IN: $(pwd)" >> "${DEST}"/debug/compilation.log
 	# ENABLE_BACKTRACE="0" has been added to workaround a regression in ATF.
 	# Check: https://github.com/armbian/build/issues/1157
 	eval CCACHE_BASEDIR="$(pwd)" env PATH="${toolchain}:${toolchain2}:${PATH}" \
@@ -191,6 +192,10 @@ compile_uboot()
 		fi
 
 		echo -e "\n\t== u-boot make $BOOTCONFIG ==\n" >> "${DEST}"/debug/compilation.log
+    	echo -e "\n\t== executing IN: $(pwd)" >> "${DEST}"/debug/compilation.log
+		echo -e "\n\t==" CCACHE_BASEDIR="$(pwd)" env PATH="${toolchain}:${toolchain2}:${PATH}" \
+			'make $CTHREADS $BOOTCONFIG \
+			CROSS_COMPILE="$CCACHE $UBOOT_COMPILER"' 2>> "${DEST}"/debug/compilation.log
 		eval CCACHE_BASEDIR="$(pwd)" env PATH="${toolchain}:${toolchain2}:${PATH}" \
 			'make $CTHREADS $BOOTCONFIG \
 			CROSS_COMPILE="$CCACHE $UBOOT_COMPILER"' 2>> "${DEST}"/debug/compilation.log \
@@ -227,6 +232,7 @@ compile_uboot()
 		[[ -n $UBOOT_TOOLCHAIN2 ]] && cross_compile="ARMBIAN=foe"; # empty parameter is not allowed
 
 		echo -e "\n\t== u-boot make $target_make ==\n" >> "${DEST}"/debug/compilation.log
+    	echo -e "\n\t== executing IN: $(pwd)" >> "${DEST}"/debug/compilation.log
 		eval CCACHE_BASEDIR="$(pwd)" env PATH="${toolchain}:${toolchain2}:${PATH}" \
 			'make $target_make $CTHREADS \
 			"${cross_compile}"' 2>>"${DEST}"/debug/compilation.log \
@@ -442,6 +448,13 @@ compile_kernel()
 	xz < .config > "${sources_pkg_dir}/usr/src/${LINUXCONFIG}_${version}_${REVISION}_config.xz"
 
 	echo -e "\n\t== kernel ==\n" >> "${DEST}"/debug/compilation.log
+  	echo -e "\n\t== executing IN: $(pwd)" >> "${DEST}"/debug/compilation.log
+	echo -e "\n\t=="  CCACHE_BASEDIR="$(pwd)" env PATH="${toolchain}:${PATH}" \
+		'make $CTHREADS ARCH=$ARCHITECTURE \
+		CROSS_COMPILE="$CCACHE $KERNEL_COMPILER" \
+		$SRC_LOADADDR \
+		LOCALVERSION="-$LINUXFAMILY" \
+		$KERNEL_IMAGE_TYPE modules dtbs' >> "${DEST}"/debug/compilation.log
 	eval CCACHE_BASEDIR="$(pwd)" env PATH="${toolchain}:${PATH}" \
 		'make $CTHREADS ARCH=$ARCHITECTURE \
 		CROSS_COMPILE="$CCACHE $KERNEL_COMPILER" \
@@ -468,6 +481,7 @@ compile_kernel()
 
 	# produce deb packages: image, headers, firmware, dtb
 	echo -e "\n\t== deb packages: image, headers, firmware, dtb ==\n" >> "${DEST}"/debug/compilation.log
+    echo -e "\n\t== executing IN: $(pwd)" >> "${DEST}"/debug/compilation.log
 	eval CCACHE_BASEDIR="$(pwd)" env PATH="${toolchain}:${PATH}" \
 		'make $CTHREADS $kernel_packing \
 		KDEB_PKGVERSION=$REVISION \

@@ -274,6 +274,8 @@ while [[ "${1}" == *=* ]]; do
     eval "$parameter=\"$value\""
 done
 
+echo "HOST_FAKEROOT IS:" ${HOST_FAKEROOT}
+
 if [[ "${BUILD_ALL}" == "yes" || "${BUILD_ALL}" == "demo" ]]; then
 	# shellcheck source=lib/build-all-ng.sh
 	source "${SRC}"/lib/build-all-ng.sh
