@@ -1078,9 +1078,9 @@ prepare_host()
 		fi
 	fi
 
-	if grep -qE "(Microsoft|WSL)" /proc/version; then
-		exit_with_error "Windows subsystem for Linux is not a supported build environment"
-	fi
+	# if grep -qE "(Microsoft|WSL)" /proc/version; then
+	#	exit_with_error "Windows subsystem for Linux is not a supported build environment"
+	#fi
 
 # build aarch64
   if [[ $(dpkg --print-architecture) == amd64 ]]; then
